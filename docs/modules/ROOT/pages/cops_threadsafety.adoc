@@ -114,7 +114,7 @@ end
 
 | Enabled
 | Yes
-| Yes (Unsafe)
+| Always (Unsafe)
 | -
 | -
 |===
