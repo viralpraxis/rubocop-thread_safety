@@ -32,6 +32,28 @@ class User
 end
 ----
 
+== ThreadSafety/DirChdir
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Enabled
+| Yes
+| No
+| -
+| -
+|===
+
+Avoid using `Dir.chdir` due to its process-wide effect.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+Dir.chdir("/var/run")
+----
+
 == ThreadSafety/InstanceVariableInClassMethod
 
 |===

@@ -30,3 +30,7 @@ ThreadSafety/NewThread:
                  Avoid starting new threads.
                  Let a framework like Sidekiq handle the threads.
   Enabled: true
+
+ThreadSafety/DirChdir:
+  Description: Avoid using `Dir.chdir` due to its process-wide effect.
+  Enabled: true
