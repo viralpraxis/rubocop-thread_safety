@@ -12,17 +12,15 @@ module RuboCop
       #   Thread.new { do_work }
       class NewThread < Base
         MSG = 'Avoid starting new threads.'
-        RESTRICT_ON_SEND = %i[new].freeze
+        RESTRICT_ON_SEND = %i[new fork start].freeze
 
         # @!method new_thread?(node)
         def_node_matcher :new_thread?, <<~MATCHER
-          (send (const {nil? cbase} :Thread) :new)
+          (send (const {nil? cbase} :Thread) {:new :fork :start} ...)
         MATCHER
 
         def on_send(node)
-          return unless new_thread?(node)
-
-          add_offense(node)
+          new_thread?(node) { add_offense(node) }
         end
       end
     end
