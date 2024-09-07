@@ -12,10 +12,13 @@ module RuboCop
         MSG = 'Avoid using `Dir.chdir` due to its process-wide effect.'
         RESTRICT_ON_SEND = %i[chdir].freeze
 
-        def on_send(node)
-          return unless node.receiver&.source == 'Dir'
+        # @!method dir_chdir?(node)
+        def_node_matcher :dir_chdir?, <<~MATCHER
+          (send (const {nil? cbase} :Dir) :chdir ...)
+        MATCHER
 
-          add_offense(node)
+        def on_send(node)
+          dir_chdir?(node) { add_offense(node) }
         end
       end
     end
