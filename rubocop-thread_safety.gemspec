@@ -18,8 +18,12 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/rubocop/rubocop-thread_safety'
   spec.licenses = ['MIT']
 
-  spec.files = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+  gemspec = File.basename(__FILE__)
+  spec.files = IO.popen(%w[git ls-files -z], chdir: __dir__, err: IO::NULL) do |ls|
+    ls.readlines("\x0", chomp: true).reject do |f|
+      (f == gemspec) ||
+        f.start_with?(*%w[bin/ test/ spec/ features/ .git/ .github/ gemfiles/ Appraisals Gemfile])
+    end
   end
 
   spec.bindir        = 'exe'
