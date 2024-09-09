@@ -49,6 +49,77 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
     RUBY
   end
 
+  it 'registers no offense for assigning an ivar in `Struct` scope' do
+    expect_no_offenses(<<~RUBY)
+      class Test
+        def self.factory_method
+          Struct.new(:width, :height) do
+            def area
+              @area ||= width * height
+            end
+          end
+        end
+      end
+    RUBY
+  end
+
+  it 'registers no offense for assigning an ivar in `Data` scope' do
+    expect_no_offenses(<<~RUBY)
+      class Test
+        def self.factory_method
+          Data.define(:width, :height) do
+            def area
+              @area ||= width * height
+            end
+          end
+        end
+      end
+    RUBY
+  end
+
+  it 'registers no offense for assigning an ivar in `Class` scope' do
+    expect_no_offenses(<<~RUBY)
+      class Test
+        def self.factory_method
+          Class.new do
+            def area
+              @area ||= some_computation
+            end
+          end
+        end
+      end
+    RUBY
+  end
+
+  it 'registers no offense for `instance_variable_get` in new lexical scope' do
+    expect_no_offenses(<<~RUBY)
+      class Test
+        def self.factory_method
+          Class.new do
+            def area
+              instance_variable_get(:@area)
+            end
+          end
+        end
+      end
+    RUBY
+  end
+
+  # FIXME: This is a false negative.
+  it 'does not register an offense for reading an ivar in a nested class method' do
+    expect_no_offenses(<<~RUBY)
+      class Test
+        define_method :generate_new_class do
+          Class.new do
+            def self.area
+              @area ||= some_computation
+            end
+          end
+        end
+      end
+    RUBY
+  end
+
   it 'registers an offense for reading an ivar in a class method' do
     expect_offense(<<~RUBY)
       class Test

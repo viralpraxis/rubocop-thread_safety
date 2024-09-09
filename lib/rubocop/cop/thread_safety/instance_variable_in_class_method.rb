@@ -82,6 +82,7 @@ module RuboCop
           return unless class_method_definition?(node)
           return if method_definition?(node)
           return if synchronized?(node)
+          return if node.each_ancestor(:block).any? { new_lexical_scope?(_1) }
 
           add_offense(node.loc.name)
         end
@@ -92,6 +93,7 @@ module RuboCop
           return unless class_method_definition?(node)
           return if method_definition?(node)
           return if synchronized?(node)
+          return if node.each_ancestor(:block).any? { new_lexical_scope?(_1) }
 
           add_offense(node)
         end
@@ -198,6 +200,15 @@ module RuboCop
         # @!method module_function_for?(node)
         def_node_matcher :module_function_for?, <<~PATTERN
           (send nil? {:module_function} ({sym str} #match_name?(%1)))
+        PATTERN
+
+        # @!method new_lexical_scope?(node)
+        def_node_matcher :new_lexical_scope?, <<~PATTERN
+          {
+            (block (send (const nil? :Struct) :new ...) _ (def ...))
+            (block (send (const nil? :Class) :new ...) _ (def ...))
+            (block (send (const nil? :Data) :define ...) _ (def ...))
+          }
         PATTERN
       end
     end
