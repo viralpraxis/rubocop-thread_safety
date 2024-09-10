@@ -42,8 +42,15 @@ module RuboCop
             ...)
         MATCHER
 
+        # @!method class_attr?(node)
+        def_node_matcher :class_attr?, <<~MATCHER
+          (send nil?
+            :class_attribute
+            ...)
+        MATCHER
+
         def on_send(node)
-          return unless mattr?(node) || singleton_attr?(node)
+          return unless mattr?(node) || (!class_attribute_allowed? && class_attr?(node)) || singleton_attr?(node)
 
           add_offense(node)
         end
@@ -65,6 +72,10 @@ module RuboCop
           end
 
           false
+        end
+
+        def class_attribute_allowed?
+          cop_config['ActiveSupportClassAttributeAllowed']
         end
       end
     end

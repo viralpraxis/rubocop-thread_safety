@@ -141,6 +141,27 @@ RSpec.describe RuboCop::Cop::ThreadSafety::ClassAndModuleAttributes, :config do
     RUBY
   end
 
+  it 'registers an offense for `class_attribute`' do
+    expect_offense(<<~RUBY)
+      class Test
+        class_attribute :foobar
+        ^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
+      end
+    RUBY
+  end
+
+  context 'with `ActiveSupportClassAttributeAllowed` option set to `true`' do
+    let(:cop_config) { { 'ActiveSupportClassAttributeAllowed' => true } }
+
+    it 'does not register an offense for `class_attribute`' do
+      expect_no_offenses(<<~RUBY)
+        class Test
+          class_attribute :foobar
+        end
+      RUBY
+    end
+  end
+
   it 'registers no offense for other class macro calls' do
     expect_no_offenses(<<~RUBY)
       class Test
