@@ -5,6 +5,7 @@
 ThreadSafety/ClassAndModuleAttributes:
   Description: 'Avoid mutating class and module attributes.'
   Enabled: true
+  ActiveSupportClassAttributeAllowed: false
 
 ThreadSafety/InstanceVariableInClassMethod:
   Description: 'Avoid using instance variables in class methods.'

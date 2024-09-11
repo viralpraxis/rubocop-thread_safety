@@ -32,6 +32,16 @@ class User
 end
 ----
 
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| ActiveSupportClassAttributeAllowed
+| `false`
+| Boolean
+|===
+
 == ThreadSafety/DirChdir
 
 |===
