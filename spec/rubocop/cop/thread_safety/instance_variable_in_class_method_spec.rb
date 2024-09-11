@@ -105,14 +105,14 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
     RUBY
   end
 
-  # FIXME: This is a false negative.
-  it 'does not register an offense for reading an ivar in a nested class method' do
-    expect_no_offenses(<<~RUBY)
+  it 'registers an offense for reading an ivar in a nested class method' do # rubocop:disable RSpec/ExampleLength
+    expect_offense(<<~RUBY)
       class Test
         define_method :generate_new_class do
           Class.new do
             def self.area
               @area ||= some_computation
+              ^^^^^ Avoid instance variables in class methods.
             end
           end
         end

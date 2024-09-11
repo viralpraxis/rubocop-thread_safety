@@ -82,7 +82,6 @@ module RuboCop
           return unless class_method_definition?(node)
           return if method_definition?(node)
           return if synchronized?(node)
-          return if node.each_ancestor(:block).any? { new_lexical_scope?(_1) }
 
           add_offense(node.loc.name)
         end
@@ -93,7 +92,6 @@ module RuboCop
           return unless class_method_definition?(node)
           return if method_definition?(node)
           return if synchronized?(node)
-          return if node.each_ancestor(:block).any? { new_lexical_scope?(_1) }
 
           add_offense(node)
         end
@@ -101,8 +99,6 @@ module RuboCop
         private
 
         def class_method_definition?(node)
-          return false if method_definition?(node)
-
           in_defs?(node) ||
             in_def_sclass?(node) ||
             in_def_class_methods?(node) ||
@@ -111,11 +107,19 @@ module RuboCop
         end
 
         def in_defs?(node)
-          node.ancestors.any?(&:defs_type?)
+          node.ancestors.any? do |ancestor|
+            break false if new_lexical_scope?(ancestor)
+
+            ancestor.defs_type?
+          end
         end
 
         def in_def_sclass?(node)
-          defn = node.ancestors.find(&:def_type?)
+          defn = node.ancestors.find do |ancestor|
+            break if new_lexical_scope?(ancestor)
+
+            ancestor.def_type?
+          end
 
           defn&.ancestors&.any?(&:sclass_type?)
         end
@@ -126,6 +130,7 @@ module RuboCop
 
         def in_def_class_methods_dsl?(node)
           node.ancestors.any? do |ancestor|
+            break if new_lexical_scope?(ancestor)
             next unless ancestor.block_type?
             next unless ancestor.children.first.is_a? AST::SendNode
 
@@ -134,7 +139,11 @@ module RuboCop
         end
 
         def in_def_class_methods_module?(node)
-          defn = node.ancestors.find(&:def_type?)
+          defn = node.ancestors.find do |ancestor|
+            break if new_lexical_scope?(ancestor)
+
+            ancestor.def_type?
+          end
           return unless defn
 
           mod = defn.ancestors.find do |ancestor|
@@ -155,6 +164,7 @@ module RuboCop
 
         def singleton_method_definition?(node)
           node.ancestors.any? do |ancestor|
+            break if new_lexical_scope?(ancestor)
             next unless ancestor.children.first.is_a? AST::SendNode
 
             ancestor.children.first.command? :define_singleton_method
@@ -163,6 +173,7 @@ module RuboCop
 
         def method_definition?(node)
           node.ancestors.any? do |ancestor|
+            break if new_lexical_scope?(ancestor)
             next unless ancestor.children.first.is_a? AST::SendNode
 
             ancestor.children.first.command? :define_method
@@ -205,9 +216,9 @@ module RuboCop
         # @!method new_lexical_scope?(node)
         def_node_matcher :new_lexical_scope?, <<~PATTERN
           {
-            (block (send (const nil? :Struct) :new ...) _ (def ...))
-            (block (send (const nil? :Class) :new ...) _ (def ...))
-            (block (send (const nil? :Data) :define ...) _ (def ...))
+            (block (send (const nil? :Struct) :new ...) _ ({def defs} ...))
+            (block (send (const nil? :Class) :new ...) _ ({def defs} ...))
+            (block (send (const nil? :Data) :define ...) _ ({def defs} ...))
           }
         PATTERN
       end
