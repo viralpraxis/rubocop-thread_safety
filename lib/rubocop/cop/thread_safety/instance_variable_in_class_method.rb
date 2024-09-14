@@ -144,19 +144,19 @@ module RuboCop
 
             ancestor.def_type?
           end
-          return unless defn
+          return false unless defn
 
           mod = defn.ancestors.find do |ancestor|
             %i[class module].include?(ancestor.type)
           end
-          return unless mod
+          return false unless mod
 
           class_methods_module?(mod)
         end
 
         def in_def_module_function?(node)
           defn = node.ancestors.find(&:def_type?)
-          return unless defn
+          return false unless defn
 
           defn.left_siblings.any? { |sibling| module_function_bare_access_modifier?(sibling) } ||
             defn.right_siblings.any? { |sibling| module_function_for?(sibling, defn.method_name) }
