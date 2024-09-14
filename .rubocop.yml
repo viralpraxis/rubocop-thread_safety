@@ -6,6 +6,7 @@ require:
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: 2.7
+  NewCops: enable
 
 Lint/RaiseException:
   Enabled: true
@@ -80,3 +81,9 @@ Style/SymbolArray:
 
 RSpec/ExampleLength:
   Max: 11
+
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
+
+Gemspec/RequireMFA:
+  Enabled: false
