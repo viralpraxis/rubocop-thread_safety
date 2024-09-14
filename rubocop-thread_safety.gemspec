@@ -22,6 +22,12 @@ Gem::Specification.new do |spec|
     f.match(%r{^(test|spec|features)/})
   end
 
+  spec.metadata = {
+    'changelog_uri' => 'https://github.com/rubocop/rubocop-thread_safety/blob/master/CHANGELOG.md',
+    'source_code_uri' => 'https://github.com/rubocop/rubocop-thread_safety',
+    'bug_tracker_uri' => 'https://github.com/rubocop/rubocop-thread_safety/issues'
+  }
+
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
