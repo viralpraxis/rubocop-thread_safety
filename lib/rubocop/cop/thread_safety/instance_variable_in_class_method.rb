@@ -219,6 +219,22 @@ module RuboCop
             (block (send (const nil? :Struct) :new ...) _ ({def defs} ...))
             (block (send (const nil? :Class) :new ...) _ ({def defs} ...))
             (block (send (const nil? :Data) :define ...) _ ({def defs} ...))
+            (block
+              (send nil?
+                {
+                  :prepend_around_action
+                  :prepend_before_action
+                  :before_action
+                  :append_before_action
+                  :around_action
+                  :append_around_action
+                  :append_after_action
+                  :after_action
+                  :prepend_after_action
+                }
+              )
+              ...
+            )
           }
         PATTERN
       end
