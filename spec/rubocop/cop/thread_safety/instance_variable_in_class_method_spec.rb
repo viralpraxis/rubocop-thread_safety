@@ -385,4 +385,28 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       end
     RUBY
   end
+
+  context 'with `ActionDispatch` callbacks' do
+    %i[
+      prepend_around_action
+      prepend_before_action
+      before_action
+      append_before_action
+      around_action
+      append_around_action
+      append_after_action
+      after_action
+      prepend_after_action
+    ].each do |action_dispatch_callback_name|
+      it "registers no offense for `#{action_dispatch_callback_name}` callback" do
+        expect_no_offenses(<<~RUBY)
+          def self.foo
+            #{action_dispatch_callback_name} do
+              @language = :haskell
+            end
+          end
+        RUBY
+      end
+    end
+  end
 end
