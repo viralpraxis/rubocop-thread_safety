@@ -1,7 +1,7 @@
 # RuboCop::ThreadSafety
 
 Thread-safety analysis for your projects, as an extension to
-[RuboCop](https://github.com/bbatsov/rubocop).
+[RuboCop](https://github.com/rubocop/rubocop).
 
 ## Installation and Usage
 
@@ -59,6 +59,8 @@ Improvements that would make shared state thread-safe include:
 * Use [`ActiveSupport::CurrentAttributes`](https://api.rubyonrails.org/classes/ActiveSupport/CurrentAttributes.html)
 * Use [`RequestStore`](https://github.com/steveklabnik/request_store)
 * Use `Thread.current[:name]`
+
+Certain system calls, such as `chdir`, affect the entire process. To avoid potential thread-safety issues, it's preferable to use (if possible) the `chdir` option in methods like `Kernel.system` and `IO.popen` rather than relying on `Dir.chdir`.
 
 ## Development
 
