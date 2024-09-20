@@ -8,17 +8,28 @@ module RuboCop
       # @example
       #   # bad
       #   Dir.chdir("/var/run")
+      #
+      #   # bad
+      #   FileUtils.chdir("/var/run")
       class DirChdir < Base
-        MSG = 'Avoid using `Dir.chdir` due to its process-wide effect.'
-        RESTRICT_ON_SEND = %i[chdir].freeze
+        MESSAGE = 'Avoid using `%<module>s.%<method>s` due to its process-wide effect.'
+        RESTRICT_ON_SEND = %i[chdir cd].freeze
 
-        # @!method dir_chdir?(node)
-        def_node_matcher :dir_chdir?, <<~MATCHER
-          (send (const {nil? cbase} :Dir) :chdir ...)
+        # @!method chdir?(node)
+        def_node_matcher :chdir?, <<~MATCHER
+          {
+            (send (const {nil? cbase} {:Dir :FileUtils}) :chdir ...)
+            (send (const {nil? cbase} :FileUtils) :cd ...)
+          }
         MATCHER
 
         def on_send(node)
-          dir_chdir?(node) { add_offense(node) }
+          chdir?(node) do
+            add_offense(
+              node,
+              message: format(MESSAGE, module: node.receiver.short_name, method: node.method_name)
+            )
+          end
         end
       end
     end

@@ -62,6 +62,9 @@ Avoid using `Dir.chdir` due to its process-wide effect.
 ----
 # bad
 Dir.chdir("/var/run")
+
+# bad
+FileUtils.chdir("/var/run")
 ----
 
 == ThreadSafety/InstanceVariableInClassMethod
