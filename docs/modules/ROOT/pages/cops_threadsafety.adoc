@@ -267,3 +267,70 @@ Let a framework like Sidekiq handle the threads.
 # bad
 Thread.new { do_work }
 ----
+
+== ThreadSafety/RackMiddlewareInstanceVariable
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Enabled
+| Yes
+| No
+| -
+| -
+|===
+
+Avoid instance variables in rack middleware.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+class CounterMiddleware
+  def initialize(app)
+    @app = app
+    @counter = 0
+  end
+
+  def call(env)
+    app.call(env)
+  ensure
+    @counter += 1
+  end
+end
+
+# good
+class CounterMiddleware
+  def initialize(app)
+    @app = app
+    @counter = Concurrent::AtomicReference.new(0)
+  end
+
+  def call(env)
+    app.call(env)
+  ensure
+    @counter.update { |ref| ref + 1 }
+  end
+end
+
+class IdentityMiddleware
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    app.call(env)
+  end
+end
+----
+
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| Include
+| `+app/middleware/**/*.rb+`, `+lib/middleware/**/*.rb+`, `+app/middlewares/**/*.rb+`, `+lib/middlewares/**/*.rb+`
+| Array
+|===
