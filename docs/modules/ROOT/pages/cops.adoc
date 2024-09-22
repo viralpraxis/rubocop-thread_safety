@@ -5,3 +5,4 @@
 * xref:cops_threadsafety.adoc#threadsafetymutableclassinstancevariable[ThreadSafety/MutableClassInstanceVariable]
 * xref:cops_threadsafety.adoc#threadsafetynewthread[ThreadSafety/NewThread]
 * xref:cops_threadsafety.adoc#threadsafetydirchdir[ThreadSafety/DirChdir]
+* xref:cops_threadsafety.adoc#threadsafetydirchdir[ThreadSafety/RackMiddlewareInstanceVariable]
