@@ -282,7 +282,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
             it_behaves_like 'mutable objects', %("\#{a}")
           end
 
-          context 'when the frozen_string_literal comment is true' do
+          context 'when the frozen_string_literal comment is true', unsupported_on: :prism do
             let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
 
             it_behaves_like 'immutable objects', %("\#{a}")
@@ -605,7 +605,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
             it_behaves_like 'mutable objects', %("\#{a}")
           end
 
-          context 'when the frozen_string_literal comment is true' do
+          context 'when the frozen_string_literal comment is true', unsupported_on: :prism do
             let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
 
             it_behaves_like 'immutable objects', %("\#{a}")

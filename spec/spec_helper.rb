@@ -39,6 +39,8 @@ RSpec.configure do |config|
     config.fail_fast = ENV.key? 'RSPEC_FAIL_FAST'
   end
 
+  config.filter_run_excluding unsupported_on: :prism if ENV['PARSER_ENGINE'] == 'parser_prism'
+
   config.disable_monkey_patching!
 
   config.order = :random
