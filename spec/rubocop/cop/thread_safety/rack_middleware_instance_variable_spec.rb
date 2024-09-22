@@ -65,14 +65,43 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
           end
 
           def call(env)
-            TOPLEVEL_BINDING
+            @x = TOPLEVEL_BINDING
+          end
+        end
+      RUBY
+    end
+
+    specify do
+      expect_no_offenses(<<~RUBY)
+        class SomeClass
+          def initialize(app)
+            @app = app
+            @user = User.new
+          end
+
+          def call(env, user)
+            @x = TOPLEVEL_BINDING
           end
         end
       RUBY
     end
   end
 
-  it 'registers an offense' do # rubocop:disable RSpec/ExampleLength
+  it 'does not register an offense' do
+    expect_no_offenses(<<~RUBY)
+      class TestMiddleware
+        def initialize(app)
+          @app = app
+        end
+
+        def call(env)
+          @app.call(env)
+        end
+      end
+    RUBY
+  end
+
+  it 'registers an offense' do
     expect_offense(<<~RUBY)
       class TestMiddleware
         def initialize(app)
@@ -88,7 +117,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     RUBY
   end
 
-  it 'registers an offense with mismatched local and instance variables' do # rubocop:disable RSpec/ExampleLength
+  it 'registers an offense with mismatched local and instance variables' do
     expect_offense(<<~RUBY)
       class TestMiddleware
         def initialize(app)
@@ -104,7 +133,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     RUBY
   end
 
-  it 'registers an offense for nested middleware' do # rubocop:disable RSpec/ExampleLength
+  it 'registers an offense for nested middleware' do
     expect_offense(<<~RUBY)
       module MyMiddlewares
         class TestMiddleware
@@ -122,7 +151,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     RUBY
   end
 
-  it 'registers an offense for multiple middlewares' do # rubocop:disable RSpec/ExampleLength
+  it 'registers an offense for multiple middlewares' do
     expect_offense(<<~RUBY)
       module MyMiddlewares
         class TestMiddleware
@@ -152,7 +181,45 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     RUBY
   end
 
-  it 'registers an offense with `call` before constructor definition' do # rubocop:disable RSpec/ExampleLength
+  it 'registers an offense for extra methods' do
+    expect_offense(<<~RUBY)
+      class TestMiddleware
+        def initialize(app)
+          @app = app
+        end
+
+        def call(env)
+          @app.call(env)
+          @a = 1
+          ^^^^^^ #{msg}
+        end
+
+        def foo
+          @a = 1
+          ^^^^^^ #{msg}
+        end
+      end
+    RUBY
+
+    expect_offense(<<~RUBY)
+      class TestMiddleware
+        def foo
+          @a = 1
+          ^^^^^^ #{msg}
+        end
+
+        def initialize(app)
+          @app = app
+        end
+
+        def call(env)
+          @app.call(env)
+        end
+      end
+    RUBY
+  end
+
+  it 'registers an offense with `call` before constructor definition' do
     expect_offense(<<~RUBY)
       class TestMiddleware
         def call(env)

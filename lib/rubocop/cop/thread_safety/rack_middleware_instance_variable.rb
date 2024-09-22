@@ -7,17 +7,9 @@ module RuboCop
       class RackMiddlewareInstanceVariable < Base
         MSG = 'Avoid instance variables in rack middleware.'
 
-        # @!method rack_middleware_application_variable(node)
-        def_node_search :rack_middleware_application_variable, <<~MATCHER
-          (class
-            (const nil _)
-            nil
-          )
-        MATCHER
-
         # @!method rack_middleware_like_class?(node)
         def_node_matcher :rack_middleware_like_class?, <<~MATCHER
-          (class (const nil? _) nil? (begin <(def :initialize (args (arg _)) ...) (def :call ...)>))
+          (class (const nil? _) nil? (begin <(def :initialize (args (arg _)) ...) (def :call (args (arg _)) ...) ...>))
         MATCHER
 
         # @!method constructor_method(node)
@@ -30,7 +22,7 @@ module RuboCop
           return unless (application_variable = extract_application_variable_from_class_node(node))
 
           node.each_node(:def) do |method_definition_node|
-            method_definition_node.each_node(*%i[ivar ivasgn]) do |ivar_node|
+            method_definition_node.each_node(:ivasgn, :ivar) do |ivar_node|
               assignable, = ivar_node.to_a
               next if assignable == application_variable
 
