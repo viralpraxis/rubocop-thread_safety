@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :config do
-  let(:msg) { 'Avoid instance variables in rack middleware.' }
+  let(:msg) { 'Avoid instance variables in Rack middleware.' }
 
   context 'with unrelated source' do
     it { expect_no_offenses '' }
@@ -112,6 +112,42 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
 
         def call(env)
           @app.call(env)
+          p @foo
+            ^^^^ #{msg}
+        end
+      end
+    RUBY
+
+    expect_offense(<<~RUBY)
+      class TestMiddleware
+        def initialize(app)
+          @app = app
+          @counter = 0
+          ^^^^^^^^^^^^ #{msg}
+        end
+
+        def call(env)
+          @app.call(env)
+        ensure
+          @counter += 1
+          ^^^^^^^^ #{msg}
+        end
+      end
+    RUBY
+  end
+
+  it 'does not register an offense with thread-safe wrappers', skip: :FIXME do
+    expect_no_offenses(<<~RUBY)
+      class TestMiddleware
+        def initialize(app)
+          @app = app
+          @counter = Concurrent::AtomicReference.new(0)
+        end
+
+        def call(env)
+          @app.call(env)
+        ensure
+          @counter.update { |ref| ref + 1 }
         end
       end
     RUBY
@@ -264,13 +300,13 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
           def initialize(app)
             @app = app
             instance_variable_set(:counter, 1)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in rack middleware.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
           end
 
           def call(env)
             @app.call(env)
             instance_variable_get(:@counter)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in rack middleware.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
           end
         end
       RUBY

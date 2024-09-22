@@ -37,7 +37,7 @@ ThreadSafety/DirChdir:
   Enabled: true
 
 ThreadSafety/RackMiddlewareInstanceVariable:
-  Description: Avoid instance variables in rack middleware.
+  Description: Avoid instance variables in Rack middleware.
   Enabled: true
   Include:
     - 'app/middleware/**/*.rb'

@@ -3,9 +3,48 @@
 module RuboCop
   module Cop
     module ThreadSafety
-      # Avoid instance variables in Rack middleware.
+      # Avoid instance variables in rack middleware.
+      #
+      # @example
+      #   # bad
+      #   class CounterMiddleware
+      #     def initialize(app)
+      #       @app = app
+      #       @counter = 0
+      #     end
+      #
+      #     def call(env)
+      #       app.call(env)
+      #     ensure
+      #       @counter += 1
+      #     end
+      #   end
+      #
+      #   # good
+      #   class CounterMiddleware
+      #     def initialize(app)
+      #       @app = app
+      #       @counter = Concurrent::AtomicReference.new(0)
+      #     end
+      #
+      #     def call(env)
+      #       app.call(env)
+      #     ensure
+      #       @counter.update { |ref| ref + 1 }
+      #     end
+      #   end
+      #
+      #   class IdentityMiddleware
+      #     def initialize(app)
+      #       @app = app
+      #     end
+      #
+      #     def call(env)
+      #       app.call(env)
+      #     end
+      #   end
       class RackMiddlewareInstanceVariable < Base
-        MSG = 'Avoid instance variables in rack middleware.'
+        MSG = 'Avoid instance variables in Rack middleware.'
 
         RESTRICT_ON_SEND = %i[instance_variable_get instance_variable_set].freeze
 
