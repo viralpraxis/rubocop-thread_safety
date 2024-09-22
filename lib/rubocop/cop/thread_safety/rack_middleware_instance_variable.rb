@@ -7,6 +7,8 @@ module RuboCop
       class RackMiddlewareInstanceVariable < Base
         MSG = 'Avoid instance variables in rack middleware.'
 
+        RESTRICT_ON_SEND = %i[instance_variable_get instance_variable_set].freeze
+
         # @!method rack_middleware_like_class?(node)
         def_node_matcher :rack_middleware_like_class?, <<~MATCHER
           (class (const nil? _) nil? (begin <(def :initialize (args (arg _)) ...) (def :call (args (arg _)) ...) ...>))
@@ -29,6 +31,10 @@ module RuboCop
               add_offense ivar_node
             end
           end
+        end
+
+        def on_send(node)
+          add_offense node
         end
 
         private

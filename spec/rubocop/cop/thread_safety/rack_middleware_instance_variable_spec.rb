@@ -217,6 +217,28 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
         end
       end
     RUBY
+
+    expect_offense(<<~RUBY)
+      class TestMiddleware
+        def foo
+          @a = 1
+          ^^^^^^ #{msg}
+        end
+
+        def initialize(app)
+          @app = app
+        end
+
+        def call(env)
+          @app.call(env)
+        end
+
+        def bar
+          @b = 1
+          ^^^^^^ #{msg}
+        end
+      end
+    RUBY
   end
 
   it 'registers an offense with `call` before constructor definition' do
@@ -233,5 +255,25 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
         end
       end
     RUBY
+  end
+
+  context 'with `instance_variable_set` and `instance_variable_get` methods' do
+    it 'registers an offense' do
+      expect_offense(<<~RUBY)
+        class TestMiddleware
+          def initialize(app)
+            @app = app
+            instance_variable_set(:counter, 1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in rack middleware.
+          end
+
+          def call(env)
+            @app.call(env)
+            instance_variable_get(:@counter)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in rack middleware.
+          end
+        end
+      RUBY
+    end
   end
 end
