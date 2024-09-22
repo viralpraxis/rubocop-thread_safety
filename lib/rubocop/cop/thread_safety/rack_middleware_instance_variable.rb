@@ -42,8 +42,6 @@ module RuboCop
         private
 
         def extract_application_variable_from_class_node(class_node)
-          require 'pry'
-
           class_node
             .each_node(:def)
             .find { |node| node.method?(:initialize) && node.arguments.size == 1 }
