@@ -282,10 +282,16 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
             it_behaves_like 'mutable objects', %("\#{a}")
           end
 
-          context 'when the frozen_string_literal comment is true', unsupported_on: :prism do
-            let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
+          context 'when the frozen_string_literal comment is true' do
+            context 'with Ruby 2.7', unsupported_on: :prism do
+              let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
 
-            it_behaves_like 'immutable objects', %("\#{a}")
+              it_behaves_like 'immutable objects', %("\#{a}")
+            end
+
+            context 'with Ruby 3', :ruby30 do
+              it_behaves_like 'mutable objects', %("\#{a}")
+            end
           end
 
           context 'when the frozen_string_literal comment is false' do
@@ -605,10 +611,18 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
             it_behaves_like 'mutable objects', %("\#{a}")
           end
 
-          context 'when the frozen_string_literal comment is true', unsupported_on: :prism do
-            let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
+          context 'when the frozen_string_literal comment is true' do
+            context 'with Ruby 2.7', unsupported_on: :prism do
+              let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
 
-            it_behaves_like 'immutable objects', %("\#{a}")
+              it_behaves_like 'immutable objects', %("\#{a}")
+            end
+
+            context 'with Ruby 3', :ruby30 do
+              let(:prefix) { "# frozen_string_literal: true\n#{super()}" }
+
+              it_behaves_like 'mutable objects', %("\#{a}")
+            end
           end
 
           context 'when the frozen_string_literal comment is false' do
