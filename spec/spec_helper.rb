@@ -18,6 +18,7 @@ $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'rubocop-thread_safety'
 
 require 'rubocop/rspec/support'
+require_relative 'shared_contexts'
 
 RSpec.configure do |config|
   config.include RuboCop::RSpec::ExpectOffense
