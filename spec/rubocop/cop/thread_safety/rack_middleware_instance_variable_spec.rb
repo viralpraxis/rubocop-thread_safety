@@ -316,4 +316,27 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
       RUBY
     end
   end
+
+  context 'with non-empty `AllowedIdentifiers` config' do
+    let(:cop_config) do
+      { 'AllowedIdentifiers' => ['options'] }
+    end
+
+    it 'registers an offense' do
+      expect_offense(<<~RUBY)
+        class TestMiddleware
+          def call(env)
+            @app.call(env)
+          end
+
+          def initialize(app)
+            @app = app
+            @some_var = 2
+            ^^^^^^^^^^^^^ #{msg}
+            @options = 1
+          end
+        end
+      RUBY
+    end
+  end
 end

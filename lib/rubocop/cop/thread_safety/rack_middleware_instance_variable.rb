@@ -44,6 +44,7 @@ module RuboCop
       #     end
       #   end
       class RackMiddlewareInstanceVariable < Base
+        include AllowedIdentifiers
         include OperationWithThreadsafeResult
 
         MSG = 'Avoid instance variables in Rack middleware.'
@@ -68,8 +69,10 @@ module RuboCop
 
           node.each_node(:def) do |method_definition_node|
             method_definition_node.each_node(:ivasgn, :ivar) do |ivar_node|
-              assignable, = ivar_node.to_a
-              next if assignable == application_variable || safe_variables.include?(assignable)
+              variable, = ivar_node.to_a
+              if variable == application_variable || safe_variables.include?(variable) || allowed_identifier?(variable)
+                next
+              end
 
               add_offense ivar_node
             end

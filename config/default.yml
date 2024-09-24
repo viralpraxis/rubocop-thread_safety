@@ -44,3 +44,4 @@ ThreadSafety/RackMiddlewareInstanceVariable:
     - 'lib/middleware/**/*.rb'
     - 'app/middlewares/**/*.rb'
     - 'lib/middlewares/**/*.rb'
+  AllowedIdentifiers: []

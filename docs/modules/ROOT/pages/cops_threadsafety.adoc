@@ -333,4 +333,8 @@ end
 | Include
 | `+app/middleware/**/*.rb+`, `+lib/middleware/**/*.rb+`, `+app/middlewares/**/*.rb+`, `+lib/middlewares/**/*.rb+`
 | Array
+
+| AllowedIdentifiers
+| `[]`
+| Array
 |===
