@@ -82,6 +82,10 @@ Style/SymbolArray:
 RSpec/ExampleLength:
   Max: 11
 
+RSpec/ContextWording:
+  Exclude:
+    - spec/shared_contexts.rb
+
 Gemspec/DevelopmentDependencies:
   EnforcedStyle: gemspec
 
