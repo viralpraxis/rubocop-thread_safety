@@ -44,6 +44,8 @@ module RuboCop
       #     end
       #   end
       class RackMiddlewareInstanceVariable < Base
+        include OperationWithThreadsafeResult
+
         MSG = 'Avoid instance variables in Rack middleware.'
 
         RESTRICT_ON_SEND = %i[instance_variable_get instance_variable_set].freeze
@@ -62,10 +64,12 @@ module RuboCop
           return unless rack_middleware_like_class?(node)
           return unless (application_variable = extract_application_variable_from_class_node(node))
 
+          safe_variables = extract_safe_variables_from_class_node(node)
+
           node.each_node(:def) do |method_definition_node|
             method_definition_node.each_node(:ivasgn, :ivar) do |ivar_node|
               assignable, = ivar_node.to_a
-              next if assignable == application_variable
+              next if assignable == application_variable || safe_variables.include?(assignable)
 
               add_offense ivar_node
             end
@@ -84,6 +88,18 @@ module RuboCop
             .find { |node| node.method?(:initialize) && node.arguments.size == 1 }
             .then { |node| constructor_method(node) }
             .then { |variables| variables.first[1] if variables.first }
+        end
+
+        def extract_safe_variables_from_class_node(class_node)
+          class_node
+            .each_node(:def)
+            .find { |node| node.method?(:initialize) && node.arguments.size == 1 }
+            .then do |node|
+              node
+                .each_node(:ivasgn)
+                .select { |ivasgn_node| operation_produces_threadsafe_object?(ivasgn_node.to_a[1]) }
+                .map { _1.to_a[0] }
+            end
         end
       end
     end

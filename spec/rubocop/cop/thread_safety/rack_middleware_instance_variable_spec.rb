@@ -136,17 +136,21 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     RUBY
   end
 
-  it 'does not register an offense with thread-safe wrappers', skip: :FIXME do
-    expect_no_offenses(<<~RUBY)
+  it 'registers an offense with thread-safe wrappers' do
+    expect_offense(<<~RUBY)
       class TestMiddleware
         def initialize(app)
           @app = app
           @counter = Concurrent::AtomicReference.new(0)
+          @unsafe_counter = 0
+          ^^^^^^^^^^^^^^^^^^^ Avoid instance variables in Rack middleware.
         end
 
         def call(env)
           @app.call(env)
         ensure
+          @unsafe_counter += 1
+          ^^^^^^^^^^^^^^^ Avoid instance variables in Rack middleware.
           @counter.update { |ref| ref + 1 }
         end
       end

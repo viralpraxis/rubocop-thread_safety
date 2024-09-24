@@ -74,8 +74,10 @@ module RuboCop
       #   end
       class MutableClassInstanceVariable < Base
         extend AutoCorrector
+
         include FrozenStringLiteral
         include ConfigurableEnforcedStyle
+        include OperationWithThreadsafeResult
 
         MSG = 'Freeze mutable objects assigned to class instance variables.'
         FROZEN_STRING_LITERAL_TYPES_RUBY27 = %i[str dstr].freeze
