@@ -243,39 +243,6 @@ module RuboCop
           }
         PATTERN
 
-        # @!method operation_produces_threadsafe_object?(node)
-        def_node_matcher :operation_produces_threadsafe_object?, <<~PATTERN
-          {
-            (send (const {nil? cbase} :Queue) :new ...)
-            (send
-              (const (const {nil? cbase} :ThreadSafe) {:Hash :Array})
-              :new ...)
-            (block
-              (send
-                (const (const {nil? cbase} :ThreadSafe) {:Hash :Array})
-                :new ...)
-              ...)
-            (send (const (const {nil? cbase} :Concurrent) _) :new ...)
-            (block
-              (send (const (const {nil? cbase} :Concurrent) _) :new ...)
-              ...)
-            (send (const (const (const {nil? cbase} :Concurrent) _) _) :new ...)
-            (block
-              (send
-                (const (const (const {nil? cbase} :Concurrent) _) _)
-                :new ...)
-              ...)
-            (send
-              (const (const (const (const {nil? cbase} :Concurrent) _) _) _)
-              :new ...)
-            (block
-              (send
-                (const (const (const (const {nil? cbase} :Concurrent) _) _) _)
-                :new ...)
-              ...)
-          }
-        PATTERN
-
         # @!method range_enclosed_in_parentheses?(node)
         def_node_matcher :range_enclosed_in_parentheses?, <<~PATTERN
           (begin ({irange erange} _ _))
