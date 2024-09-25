@@ -45,21 +45,6 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     specify do
       expect_no_offenses(<<~RUBY)
         class SomeClass
-          def initialize(user, context)
-            @user = user
-            @context = context
-          end
-
-          def call(env)
-            [@user, @context]
-          end
-        end
-      RUBY
-    end
-
-    specify do
-      expect_no_offenses(<<~RUBY)
-        class SomeClass
           def initialize(app)
             @user = User.new
           end
@@ -334,6 +319,28 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
             @some_var = 2
             ^^^^^^^^^^^^^ #{msg}
             @options = 1
+          end
+        end
+      RUBY
+    end
+  end
+
+  context 'with middleware with provided options' do
+    it 'registers an offense' do
+      expect_offense(<<~RUBY)
+        class TestMiddleware
+          def initialize(app, options)
+            @app = app
+            @options = options
+            ^^^^^^^^^^^^^^^^^^ #{msg}
+          end
+
+          def call(env)
+            if options[:noop]
+              [200, {}, []]
+            else
+              @app.call(env)
+            end
           end
         end
       RUBY

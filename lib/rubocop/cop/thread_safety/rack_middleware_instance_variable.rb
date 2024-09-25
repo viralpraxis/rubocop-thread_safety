@@ -53,22 +53,23 @@ module RuboCop
 
         # @!method rack_middleware_like_class?(node)
         def_node_matcher :rack_middleware_like_class?, <<~MATCHER
-          (class (const nil? _) nil? (begin <(def :initialize (args (arg _)) ...) (def :call (args (arg _)) ...) ...>))
+          (class (const nil? _) nil? (begin <(def :initialize (args (arg _)+) ...) (def :call (args (arg _)) ...) ...>))
         MATCHER
 
-        # @!method constructor_method(node)
-        def_node_search :constructor_method, <<~MATCHER
-          (def :initialize (args (arg $_)) `(ivasgn $_ (lvar $_)))
+        # @!method app_variable(node)
+        def_node_search :app_variable, <<~MATCHER
+          (def :initialize (args (arg $_) ...) `(ivasgn $_ (lvar $_)))
         MATCHER
 
         def on_class(node)
           return unless rack_middleware_like_class?(node)
-          return unless (application_variable = extract_application_variable_from_class_node(node))
+          return unless (constructor_method = find_constructor_method(node))
+          return unless (application_variable = extract_application_variable_from_contructor_method(constructor_method))
 
-          safe_variables = extract_safe_variables_from_class_node(node)
+          safe_variables = extract_safe_variables_from_constructor_method(constructor_method)
 
-          node.each_node(:def) do |method_definition_node|
-            method_definition_node.each_node(:ivasgn, :ivar) do |ivar_node|
+          node.each_node(:def) do |def_node|
+            def_node.each_node(:ivasgn, :ivar) do |ivar_node|
               variable, = ivar_node.to_a
               if variable == application_variable || safe_variables.include?(variable) || allowed_identifier?(variable)
                 next
@@ -85,24 +86,23 @@ module RuboCop
 
         private
 
-        def extract_application_variable_from_class_node(class_node)
+        def find_constructor_method(class_node)
           class_node
             .each_node(:def)
-            .find { |node| node.method?(:initialize) && node.arguments.size == 1 }
-            .then { |node| constructor_method(node) }
+            .find { |node| node.method?(:initialize) && node.arguments.size >= 1 }
+        end
+
+        def extract_application_variable_from_contructor_method(constructor_method)
+          constructor_method
+            .then { |node| app_variable(node) }
             .then { |variables| variables.first[1] if variables.first }
         end
 
-        def extract_safe_variables_from_class_node(class_node)
-          class_node
-            .each_node(:def)
-            .find { |node| node.method?(:initialize) && node.arguments.size == 1 }
-            .then do |node|
-              node
-                .each_node(:ivasgn)
-                .select { |ivasgn_node| operation_produces_threadsafe_object?(ivasgn_node.to_a[1]) }
-                .map { _1.to_a[0] }
-            end
+        def extract_safe_variables_from_constructor_method(constructor_method)
+          constructor_method
+            .each_node(:ivasgn)
+            .select { |ivasgn_node| operation_produces_threadsafe_object?(ivasgn_node.to_a[1]) }
+            .map { _1.to_a[0] }
         end
       end
     end
