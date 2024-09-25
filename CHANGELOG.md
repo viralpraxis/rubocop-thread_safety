@@ -2,7 +2,6 @@
 
 ## master (unreleased)
 
-<<<<<<< HEAD
 * [#54](https://github.com/rubocop/rubocop-thread_safety/pull/54): Drop support for RuboCop older than 1.48. ([@viralpraxis](https://github.com/viralpraxis))
 * [#52](https://github.com/rubocop/rubocop-thread_safety/pull/52): Add new `RackMiddlewareInstanceVariable` cop to detect instance variables in Rack middleware. ([@viralpraxis](https://github.com/viralpraxis))
 * [#48](https://github.com/rubocop/rubocop-thread_safety/pull/48): Do not report instance variables in `ActionDispatch` callbacks in singleton methods. ([@viralpraxis](https://github.com/viralpraxis))
