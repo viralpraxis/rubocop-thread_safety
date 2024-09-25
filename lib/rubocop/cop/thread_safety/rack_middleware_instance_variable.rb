@@ -5,6 +5,10 @@ module RuboCop
     module ThreadSafety
       # Avoid instance variables in rack middleware.
       #
+      # Middlewares are initialized once, meaning any instance variables are shared between executor threads.
+      # To avoid potential race conditions, it's recommended to design middlewares to be stateless
+      # or to implement proper synchronization mechanisms.
+      #
       # @example
       #   # bad
       #   class CounterMiddleware
