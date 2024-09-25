@@ -309,7 +309,9 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
           end
         end
       RUBY
+    end
 
+    it 'registers no offenses' do
       expect_no_offenses(<<~RUBY)
         class TestMiddleware
           def initialize(app)
