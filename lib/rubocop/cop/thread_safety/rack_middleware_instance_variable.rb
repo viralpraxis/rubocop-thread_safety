@@ -67,7 +67,8 @@ module RuboCop
 
         def on_class(node)
           return unless rack_middleware_like_class?(node)
-          return unless (constructor_method = find_constructor_method(node))
+
+          constructor_method = find_constructor_method(node)
           return unless (application_variable = extract_application_variable_from_contructor_method(constructor_method))
 
           safe_variables = extract_safe_variables_from_constructor_method(constructor_method)
@@ -85,6 +86,11 @@ module RuboCop
         end
 
         def on_send(node)
+          argument = node.first_argument
+
+          return unless argument&.sym_type? || argument&.str_type?
+          return if allowed_identifier?(argument.value)
+
           add_offense node
         end
 

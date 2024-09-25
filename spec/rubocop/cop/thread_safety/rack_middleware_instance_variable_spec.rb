@@ -30,6 +30,16 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
     specify do
       expect_no_offenses(<<~RUBY)
         class SomeClass
+          def call(env)
+            @env = env
+          end
+        end
+      RUBY
+    end
+
+    specify do
+      expect_no_offenses(<<~RUBY)
+        class SomeClass
           def initialize(user, context)
             @user = user
             @context = context
@@ -294,11 +304,60 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
 
           def call(env)
             @app.call(env)
-            instance_variable_get(:@counter)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
+            instance_variable_get("@counter")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
           end
         end
       RUBY
+
+      expect_no_offenses(<<~RUBY)
+        class TestMiddleware
+          def initialize(app)
+            @app = app
+            instance_variable_set
+          end
+
+          def call(env)
+            @app.call(env)
+            instance_variable_get
+          end
+        end
+      RUBY
+
+      expect_no_offenses(<<~RUBY)
+        class TestMiddleware
+          def initialize(app)
+            @app = app
+            instance_variable_set(1)
+          end
+
+          def call(env)
+            @app.call(env)
+            instance_variable_get({})
+          end
+        end
+      RUBY
+    end
+
+    context 'with non-empty `AllowedIdentifiers` config' do
+      let(:cop_config) do
+        { 'AllowedIdentifiers' => ['options'] }
+      end
+
+      it 'registers no offenses' do
+        expect_no_offenses(<<~RUBY)
+          class TestMiddleware
+            def initialize(app)
+              @app = app
+              instance_variable_set(:@options, {})
+            end
+
+            def call(env)
+              @app.call(env)
+            end
+          end
+        RUBY
+      end
     end
   end
 
