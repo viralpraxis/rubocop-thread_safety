@@ -290,6 +290,37 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
     RUBY
   end
 
+  it 'registers an offense for instance variable within `class_eval` block' do # rubocop:disable RSpec/ExampleLength
+    expect_offense(<<~RUBY)
+      def separate_with(separator)
+        Example.class_eval do
+          @separator = separator
+          ^^^^^^^^^^ Avoid instance variables in class methods.
+        end
+      end
+    RUBY
+
+    expect_offense(<<~RUBY)
+      def separate_with(separator)
+        ::Example.class_eval do
+          @separator = separator
+          ^^^^^^^^^^ Avoid instance variables in class methods.
+        end
+      end
+    RUBY
+  end
+
+  it 'registers an offense for instance variable within `class_exec` block' do
+    expect_offense(<<~RUBY)
+      def separate_with(separator)
+        Example.class_exec do
+          @separator = separator
+          ^^^^^^^^^^ Avoid instance variables in class methods.
+        end
+      end
+    RUBY
+  end
+
   it 'registers no offense for ivar_set in define_method' do
     expect_no_offenses(<<~RUBY)
       class Test
@@ -382,6 +413,46 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
         end
 
         module_function :another_method
+      end
+    RUBY
+  end
+
+  it 'does not register an offense for instance variable within `module_eval` block' do
+    expect_no_offenses(<<~RUBY)
+      def separate_with(separator)
+        Utilities.module_eval do
+          @separator = separator
+        end
+      end
+    RUBY
+  end
+
+  it 'does not register an offense for instance variable within `module_exec` block' do
+    expect_no_offenses(<<~RUBY)
+      def separate_with(separator)
+        Utilities.module_exec do
+          @separator = separator
+        end
+      end
+    RUBY
+  end
+
+  it 'does not register an offense for instance variable within `class_*` with new instance method' do
+    expect_no_offenses(<<~RUBY)
+      def separate_with(separator)
+        Example.class_eval do
+          def separator
+            @separator
+          end
+        end
+      end
+    RUBY
+  end
+
+  it 'does not register an offense for instance variable within `class_*` with string argument' do
+    expect_no_offenses(<<~RUBY)
+      def separate_with(separator)
+        Example.class_eval "@f = Kernel.exit"
       end
     RUBY
   end
