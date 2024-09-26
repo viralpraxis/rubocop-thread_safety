@@ -74,8 +74,10 @@ module RuboCop
       #   end
       class MutableClassInstanceVariable < Base
         extend AutoCorrector
+
         include FrozenStringLiteral
         include ConfigurableEnforcedStyle
+        include OperationWithThreadsafeResult
 
         MSG = 'Freeze mutable objects assigned to class instance variables.'
         FROZEN_STRING_LITERAL_TYPES_RUBY27 = %i[str dstr].freeze
@@ -238,39 +240,6 @@ module RuboCop
             (or (send (const {nil? cbase} :ENV) :[] _) _)
             (send _ {:count :length :size} ...)
             (block (send _ {:count :length :size} ...) ...)
-          }
-        PATTERN
-
-        # @!method operation_produces_threadsafe_object?(node)
-        def_node_matcher :operation_produces_threadsafe_object?, <<~PATTERN
-          {
-            (send (const {nil? cbase} :Queue) :new ...)
-            (send
-              (const (const {nil? cbase} :ThreadSafe) {:Hash :Array})
-              :new ...)
-            (block
-              (send
-                (const (const {nil? cbase} :ThreadSafe) {:Hash :Array})
-                :new ...)
-              ...)
-            (send (const (const {nil? cbase} :Concurrent) _) :new ...)
-            (block
-              (send (const (const {nil? cbase} :Concurrent) _) :new ...)
-              ...)
-            (send (const (const (const {nil? cbase} :Concurrent) _) _) :new ...)
-            (block
-              (send
-                (const (const (const {nil? cbase} :Concurrent) _) _)
-                :new ...)
-              ...)
-            (send
-              (const (const (const (const {nil? cbase} :Concurrent) _) _) _)
-              :new ...)
-            (block
-              (send
-                (const (const (const (const {nil? cbase} :Concurrent) _) _) _)
-                :new ...)
-              ...)
           }
         PATTERN
 
