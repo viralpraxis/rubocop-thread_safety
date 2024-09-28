@@ -41,10 +41,6 @@ Style/FormatStringToken:
   Exclude:
     - spec/**/*
 
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - "gemfiles/*.gemfile"
-
 Style/HashEachMethods:
   Enabled: true
 
@@ -68,10 +64,6 @@ Style/OptionHash:
 
 Style/Send:
   Enabled: true
-
-Style/StringLiterals:
-  Exclude:
-    - "gemfiles/*.gemfile"
 
 Style/StringMethods:
   Enabled: true
