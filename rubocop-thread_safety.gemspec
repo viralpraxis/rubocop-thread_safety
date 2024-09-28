@@ -25,7 +25,8 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     'changelog_uri' => 'https://github.com/rubocop/rubocop-thread_safety/blob/master/CHANGELOG.md',
     'source_code_uri' => 'https://github.com/rubocop/rubocop-thread_safety',
-    'bug_tracker_uri' => 'https://github.com/rubocop/rubocop-thread_safety/issues'
+    'bug_tracker_uri' => 'https://github.com/rubocop/rubocop-thread_safety/issues',
+    'rubygems_mfa_required' => 'true'
   }
 
   spec.bindir        = 'exe'

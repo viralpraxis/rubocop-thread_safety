@@ -90,6 +90,3 @@ RSpec/ContextWording:
 
 Gemspec/DevelopmentDependencies:
   EnforcedStyle: gemspec
-
-Gemspec/RequireMFA:
-  Enabled: false
