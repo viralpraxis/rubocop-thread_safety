@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :config do
+RSpec.describe RuboCop::Cop::ThreadSafety::ClassInstanceVariable, :config do
+  let(:msg) { 'Avoid class instance variables.' }
+
   it 'registers an offense for assigning to an ivar in a class method' do
     expect_offense(<<~RUBY)
       class Test
         def self.some_method(params)
           @params = params
-          ^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -112,7 +114,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
           Class.new do
             def self.area
               @area ||= some_computation
-              ^^^^^ Avoid instance variables in class methods.
+              ^^^^^ #{msg}
             end
           end
         end
@@ -125,7 +127,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       class Test
         def self.some_method
           do_work(@params)
-                  ^^^^^^^ Avoid instance variables in class methods.
+                  ^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -136,7 +138,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       module ClassMethods
         def some_method(params)
           @params = params
-          ^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -148,7 +150,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
         class_methods do
           def some_method(params)
             @params = params
-            ^^^^^^^ Avoid instance variables in class methods.
+            ^^^^^^^ #{msg}
           end
         end
       end
@@ -161,7 +163,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
         class << self
           def some_method(params)
             @params = params
-            ^^^^^^^ Avoid instance variables in class methods.
+            ^^^^^^^ #{msg}
           end
         end
       end
@@ -173,7 +175,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       class Test
         define_singleton_method(:some_method) do |params|
           @params = params
-          ^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -184,7 +186,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       class Test
         def self.some_method
           do_work(instance_variable_get(:@params))
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -196,7 +198,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
         class << self
           def some_method(name, params)
             instance_variable_set(:"@\#{name}", params)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
           end
         end
       end
@@ -208,7 +210,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       module ClassMethods
         def some_method(params)
           instance_variable_set(:@params, params)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -220,7 +222,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
         class_methods do
           def some_method(params)
             instance_variable_set(:@params, params)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
           end
         end
       end
@@ -232,7 +234,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       class Test
         define_singleton_method(:some_method) do |params|
           instance_variable_set(:@params, params)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -245,7 +247,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
 
         def some_method(params)
           instance_variable_set(:@params, params)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -256,7 +258,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       module Test
         def some_method(params)
           instance_variable_set(:@params, params)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
         end
 
         module_function :some_method
@@ -271,7 +273,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
 
         def some_method(params)
           @params = params
-          ^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -282,7 +284,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       module Test
         def some_method(params)
           @params = params
-          ^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^ #{msg}
         end
 
         module_function :some_method
@@ -295,7 +297,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       def separate_with(separator)
         Example.class_eval do
           @separator = separator
-          ^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -304,7 +306,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       def separate_with(separator)
         ::Example.class_eval do
           @separator = separator
-          ^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^ #{msg}
         end
       end
     RUBY
@@ -315,7 +317,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::InstanceVariableInClassMethod, :confi
       def separate_with(separator)
         Example.class_exec do
           @separator = separator
-          ^^^^^^^^^^ Avoid instance variables in class methods.
+          ^^^^^^^^^^ #{msg}
         end
       end
     RUBY

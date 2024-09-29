@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module ThreadSafety
-      # Avoid instance variables in class methods.
+      # Avoid class instance variables.
       #
       # @example
       #   # bad
@@ -61,8 +61,8 @@ module RuboCop
       #
       #     module_function :test
       #   end
-      class InstanceVariableInClassMethod < Base
-        MSG = 'Avoid instance variables in class methods.'
+      class ClassInstanceVariable < Base
+        MSG = 'Avoid class instance variables.'
         RESTRICT_ON_SEND = %i[
           instance_variable_set
           instance_variable_get
