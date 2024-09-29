@@ -103,6 +103,7 @@ module RuboCop
             in_def_sclass?(node) ||
             in_def_class_methods?(node) ||
             in_def_module_function?(node) ||
+            in_class_eval?(node) ||
             singleton_method_definition?(node)
         end
 
@@ -160,6 +161,17 @@ module RuboCop
 
           defn.left_siblings.any? { |sibling| module_function_bare_access_modifier?(sibling) } ||
             defn.right_siblings.any? { |sibling| module_function_for?(sibling, defn.method_name) }
+        end
+
+        def in_class_eval?(node)
+          defn = node.ancestors.find do |ancestor|
+            break if ancestor.def_type? || new_lexical_scope?(ancestor)
+
+            ancestor.block_type?
+          end
+          return false unless defn
+
+          class_eval_scope?(defn)
         end
 
         def singleton_method_definition?(node)
@@ -236,6 +248,11 @@ module RuboCop
               ...
             )
           }
+        PATTERN
+
+        # @!method class_eval_scope?(node)
+        def_node_matcher :class_eval_scope?, <<~PATTERN
+          (block (send (const {nil? cbase} _) {:class_eval :class_exec}) ...)
         PATTERN
       end
     end
