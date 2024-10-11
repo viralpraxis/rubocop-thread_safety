@@ -16,6 +16,7 @@ end
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'rubocop-thread_safety'
+require 'rubocop-ast'
 
 require 'rubocop/rspec/support'
 require_relative 'shared_contexts'
@@ -38,6 +39,15 @@ RSpec.configure do |config|
     config.filter_run focus: true
     config.run_all_when_everything_filtered = true
     config.fail_fast = ENV.key? 'RSPEC_FAIL_FAST'
+  end
+
+  config.around :each, :with_legacy_lambda_node do |example|
+    initial_value = RuboCop::AST::Builder.emit_lambda
+    RuboCop::AST::Builder.emit_lambda = true
+
+    example.call
+  ensure
+    RuboCop::AST::Builder.emit_lambda = initial_value
   end
 
   config.filter_run_excluding unsupported_on: :prism if ENV['PARSER_ENGINE'] == 'parser_prism'
