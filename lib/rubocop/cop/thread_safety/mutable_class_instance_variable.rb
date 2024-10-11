@@ -90,7 +90,7 @@ module RuboCop
         end
 
         def on_or_asgn(node)
-          return unless node.assignment_node&.ivasgn_type?
+          return unless node.assignment_node.ivasgn_type?
           return unless in_class?(node)
 
           on_assignment(node.expression)

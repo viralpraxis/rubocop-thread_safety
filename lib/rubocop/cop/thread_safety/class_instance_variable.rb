@@ -133,7 +133,6 @@ module RuboCop
           node.ancestors.any? do |ancestor|
             break if new_lexical_scope?(ancestor)
             next unless ancestor.block_type?
-            next unless ancestor.children.first.is_a? AST::SendNode
 
             ancestor.children.first.command? :class_methods
           end

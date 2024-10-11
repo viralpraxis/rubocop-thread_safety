@@ -266,6 +266,20 @@ RSpec.describe RuboCop::Cop::ThreadSafety::ClassInstanceVariable, :config do
     RUBY
   end
 
+  it 'does not register an offenses for synchronized ivar_set in a method marked by module_function' do
+    expect_no_offenses(<<~RUBY)
+      module Test
+        def some_method(params)
+          $mutex.synchronize do
+            instance_variable_set(:@params, params)
+          end
+        end
+
+        module_function :some_method
+      end
+    RUBY
+  end
+
   it 'registers an offense for assigning an ivar in a method below module_function directive' do
     expect_offense(<<~RUBY)
       module Test
