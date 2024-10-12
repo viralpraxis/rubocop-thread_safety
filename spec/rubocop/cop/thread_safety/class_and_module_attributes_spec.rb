@@ -90,6 +90,14 @@ RSpec.describe RuboCop::Cop::ThreadSafety::ClassAndModuleAttributes, :config do
       RUBY
     end
 
+    it 'registers no offense for `attr_accessor` within procs' do
+      expect_no_offenses(<<~RUBY)
+        module Test
+          DEFINE_ACCESSOR = ->{ attr_accessor :foobar }
+        end
+      RUBY
+    end
+
     context 'when in a singleton class method' do
       it 'registers no offense for `attr_accessor`' do
         expect_no_offenses(<<~RUBY)

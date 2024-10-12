@@ -157,6 +157,23 @@ RSpec.describe RuboCop::Cop::ThreadSafety::ClassInstanceVariable, :config do
     RUBY
   end
 
+  # rubocop:disable RSpec/ExampleLength
+  it 'registers an offense for assigning an ivar in class_methods within lambda', :with_legacy_lambda_node do
+    expect_offense(<<~RUBY)
+      module Test
+        class_methods do
+          ->() {
+            def some_method(params)
+              @params = params
+              ^^^^^^^ #{msg}
+            end
+          }
+        end
+      end
+    RUBY
+  end
+  # rubocop:enable RSpec/ExampleLength
+
   it 'registers an offense for assigning an ivar in a class singleton method' do
     expect_offense(<<~RUBY)
       class Test
@@ -259,6 +276,20 @@ RSpec.describe RuboCop::Cop::ThreadSafety::ClassInstanceVariable, :config do
         def some_method(params)
           instance_variable_set(:@params, params)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
+        end
+
+        module_function :some_method
+      end
+    RUBY
+  end
+
+  it 'does not register an offenses for synchronized ivar_set in a method marked by module_function' do
+    expect_no_offenses(<<~RUBY)
+      module Test
+        def some_method(params)
+          $mutex.synchronize do
+            instance_variable_set(:@params, params)
+          end
         end
 
         module_function :some_method

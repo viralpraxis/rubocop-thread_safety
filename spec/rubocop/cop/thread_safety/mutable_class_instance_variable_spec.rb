@@ -41,6 +41,12 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
           @var ||= #{o}.freeze
         RUBY
       end
+
+      it 'registers no offense for `or-asgn` node without ivar' do
+        expect_no_offenses(surround(<<~RUBY))
+          var ||= %{o}
+        RUBY
+      end
     end
   end
 
@@ -344,6 +350,12 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
 
             expect_correction(surround(<<~RUBY))
               @a, @b, @c = 'foo'.freeze, [2].freeze, 3
+            RUBY
+          end
+
+          it 'registers no offenses for multiple mutable objects without class' do
+            expect_no_offenses(<<~RUBY)
+              @a, @b, @c = 'foo', [2], 3
             RUBY
           end
         end
@@ -675,6 +687,12 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
 
             expect_correction(surround(<<~RUBY))
               @a, @b, @c = 'foo'.freeze, [2].freeze, 3
+            RUBY
+          end
+
+          it 'registers no offenses for single assignment' do
+            expect_no_offenses(surround(<<~RUBY))
+              @a, @b = 1
             RUBY
           end
         end
