@@ -1,6 +1,6 @@
 # Change log
 
-## master (unreleased)
+## 0.6.0
 
 * [#59](https://github.com/rubocop/rubocop-thread_safety/pull/59): Rename `ThreadSafety::InstanceVariableInClassMethod` cop to `ThreadSafety::ClassInstanceVariable` to better reflect its purpose. ([@viralpraxis](https://github.com/viralpraxis))
 * [#55](https://github.com/rubocop/rubocop-thread_safety/pull/55): Enhance `ThreadSafety::InstanceVariableInClassMethod` cop to detect offenses within `class_eval/exec` blocks. ([@viralpraxis](https://github.com/viralpraxis))
