@@ -3,8 +3,12 @@
 require 'bundler/gem_tasks'
 require 'open3'
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 
 Dir['tasks/**/*.rake'].each { |t| load t }
+
+desc 'Run RuboCop over itself'
+RuboCop::RakeTask.new(:internal_investigation)
 
 RSpec::Core::RakeTask.new(:spec)
 
