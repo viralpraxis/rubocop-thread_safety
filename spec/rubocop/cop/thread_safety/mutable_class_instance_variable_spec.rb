@@ -131,7 +131,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
         it_behaves_like 'mutable objects', '%w(a b c)'
         it_behaves_like 'mutable objects', '{ a: 1, b: 2 }'
         it_behaves_like 'mutable objects', "'str'"
-        it_behaves_like 'mutable objects', %("\#{30 + 12}nd")
+        it_behaves_like 'mutable objects', %("\#{30 + 12}ok")
 
         it_behaves_like 'immutable objects', '1'
         it_behaves_like 'immutable objects', '2.1'
@@ -391,7 +391,7 @@ RSpec.describe RuboCop::Cop::ThreadSafety::MutableClassInstanceVariable,
         it_behaves_like 'mutable objects', '%w(a b c)'
         it_behaves_like 'mutable objects', '{ a: 1, b: 2 }'
         it_behaves_like 'mutable objects', "'str'"
-        it_behaves_like 'mutable objects', %("\#{30 + 12}nd")
+        it_behaves_like 'mutable objects', %("\#{30 + 12}ok")
         it_behaves_like 'mutable objects', 'Something.new'
 
         it_behaves_like 'immutable objects', '1'
