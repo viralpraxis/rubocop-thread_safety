@@ -1,5 +1,9 @@
 # Change log
 
+## master
+
+- [#73](https://github.com/rubocop/rubocop-thread_safety/pull/73): Add `AllowCallWithBlock` option to `ThreadSafety/DirChdir` cop. ([@viralpraxis](https://github.com/viralpraxis))
+
 ## 0.6.0
 
 * [#59](https://github.com/rubocop/rubocop-thread_safety/pull/59): Rename `ThreadSafety::InstanceVariableInClassMethod` cop to `ThreadSafety::ClassInstanceVariable` to better reflect its purpose. ([@viralpraxis](https://github.com/viralpraxis))
