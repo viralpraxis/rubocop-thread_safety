@@ -24,6 +24,33 @@ RSpec.describe RuboCop::Cop::ThreadSafety::DirChdir, :config do
         ^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
       RUBY
     end
+
+    it 'registers an offense with provided block' do
+      expect_offense(<<~RUBY)
+        Dir.chdir("/var/run") do
+        ^^^^^^^^^^^^^^^^^^^^^ #{msg}
+          puts Dir.pwd
+        end
+      RUBY
+    end
+
+    it 'registers an offense with provided block with argument' do
+      expect_offense(<<~RUBY)
+        Dir.chdir("/var/run") do |dir|
+        ^^^^^^^^^^^^^^^^^^^^^ #{msg}
+          puts dir
+        end
+      RUBY
+    end
+
+    it 'registers an offense with provided block argument' do
+      expect_offense(<<~RUBY)
+        def change_dir(&block)
+          Dir.chdir("/var/run", &block)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
+        end
+      RUBY
+    end
   end
 
   context 'with `FileUtils.chdir` method' do
@@ -54,9 +81,46 @@ RSpec.describe RuboCop::Cop::ThreadSafety::DirChdir, :config do
     end
   end
 
-  context 'when received is not `Dir`' do
+  context 'when receiver is not `Dir`' do
     it 'does not register an offense' do
       expect_no_offenses 'chdir("/tmp")'
+    end
+  end
+
+  context 'with `AllowCallWithBlock` config set to `true`' do
+    let(:cop_config) do
+      { 'Enabled' => true, 'AllowCallWithBlock' => true }
+    end
+
+    it 'registers an offense' do
+      expect_offense(<<~RUBY)
+        Dir.chdir("/var/run")
+        ^^^^^^^^^^^^^^^^^^^^^ #{msg}
+      RUBY
+    end
+
+    it 'does not register an offense with provided block' do
+      expect_no_offenses(<<~RUBY)
+        Dir.chdir("/var/run") do
+          puts Dir.pwd
+        end
+      RUBY
+    end
+
+    it 'does not register an offense with provided block with argument' do
+      expect_no_offenses(<<~RUBY)
+        Dir.chdir("/var/run") do |dir|
+          puts dir
+        end
+      RUBY
+    end
+
+    it 'does not register an offense with provided block argument' do
+      expect_no_offenses(<<~RUBY)
+        def change_dir(&block)
+          Dir.chdir("/var/run", &block)
+        end
+      RUBY
     end
   end
 end

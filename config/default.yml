@@ -35,6 +35,7 @@ ThreadSafety/NewThread:
 ThreadSafety/DirChdir:
   Description: Avoid using `Dir.chdir` due to its process-wide effect.
   Enabled: true
+  AllowCallWithBlock: false
 
 ThreadSafety/RackMiddlewareInstanceVariable:
   Description: Avoid instance variables in Rack middleware.
