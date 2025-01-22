@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::ThreadSafety::DirChdir, :config do
-  %w[Dir.chdir FileUtils.chdir FileUtils.cd].each do |expression|
+  %w[Dir.chdir Dir&.chdir FileUtils.chdir FileUtils.cd].each do |expression|
     context "with `#{expression}` call" do
       it 'registers an offense' do
         expect_offense(<<~RUBY, expression: expression)

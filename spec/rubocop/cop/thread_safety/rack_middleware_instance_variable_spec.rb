@@ -311,6 +311,25 @@ RSpec.describe RuboCop::Cop::ThreadSafety::RackMiddlewareInstanceVariable, :conf
       RUBY
     end
 
+    it 'registers an offense with safe navigation' do
+      expect_offense(<<~RUBY)
+        class TestMiddleware
+          def initialize(app)
+            @app = app
+            foo = SomeClass.new
+            instance_variable_set(:counter, 1)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
+          end
+
+          def call(env)
+            @app.call(env)
+            instance_variable_get("@counter")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{msg}
+          end
+        end
+      RUBY
+    end
+
     it 'registers no offenses' do
       expect_no_offenses(<<~RUBY)
         class TestMiddleware

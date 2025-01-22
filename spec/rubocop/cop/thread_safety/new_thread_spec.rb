@@ -45,6 +45,13 @@ RSpec.describe RuboCop::Cop::ThreadSafety::NewThread, :config do
     RUBY
   end
 
+  it 'registers an offense for starting a new thread with safe navigation' do
+    expect_offense(<<~RUBY)
+      Thread&.new { do_work }
+      ^^^^^^^^^^^ #{msg}
+    RUBY
+  end
+
   it 'does not register an offense for calling new on other classes' do
     expect_no_offenses('Other.new { do_work }')
   end

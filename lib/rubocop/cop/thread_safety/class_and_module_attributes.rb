@@ -49,7 +49,7 @@ module RuboCop
             ...)
         MATCHER
 
-        def on_send(node)
+        def on_send(node) # rubocop:disable InternalAffairs/OnSendWithoutOnCSend
           return unless mattr?(node) || (!class_attribute_allowed? && class_attr?(node)) || singleton_attr?(node)
 
           add_offense(node)
