@@ -16,12 +16,13 @@ module RuboCop
 
         # @!method new_thread?(node)
         def_node_matcher :new_thread?, <<~MATCHER
-          (send (const {nil? cbase} :Thread) {:new :fork :start} ...)
+          ({send csend} (const {nil? cbase} :Thread) {:new :fork :start} ...)
         MATCHER
 
         def on_send(node)
           new_thread?(node) { add_offense(node) }
         end
+        alias on_csend on_send
       end
     end
   end

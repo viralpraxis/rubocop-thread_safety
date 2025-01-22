@@ -87,7 +87,7 @@ module RuboCop
         end
         alias on_ivasgn on_ivar
 
-        def on_send(node)
+        def on_send(node) # rubocop:disable InternalAffairs/OnSendWithoutOnCSend
           return unless instance_variable_call?(node)
           return unless class_method_definition?(node)
           return if method_definition?(node)

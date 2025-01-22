@@ -27,14 +27,14 @@ module RuboCop
       #   end
       #
       class DirChdir < Base
-        MESSAGE = 'Avoid using `%<module>s.%<method>s` due to its process-wide effect.'
+        MESSAGE = 'Avoid using `%<module>s%<dot>s%<method>s` due to its process-wide effect.'
         RESTRICT_ON_SEND = %i[chdir cd].freeze
 
         # @!method chdir?(node)
         def_node_matcher :chdir?, <<~MATCHER
           {
-            (send (const {nil? cbase} {:Dir :FileUtils}) :chdir ...)
-            (send (const {nil? cbase} :FileUtils) :cd ...)
+            ({send csend} (const {nil? cbase} {:Dir :FileUtils}) :chdir ...)
+            ({send csend} (const {nil? cbase} :FileUtils) :cd ...)
           }
         MATCHER
 
@@ -44,9 +44,15 @@ module RuboCop
 
           add_offense(
             node,
-            message: format(MESSAGE, module: node.receiver.short_name, method: node.method_name)
+            message: format(
+              MESSAGE,
+              module: node.receiver.short_name,
+              method: node.method_name,
+              dot: node.loc.dot.source
+            )
           )
         end
+        alias on_csend on_send
 
         private
 

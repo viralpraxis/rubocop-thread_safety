@@ -2,6 +2,7 @@
 
 ## master
 
+- [#76](https://github.com/rubocop/rubocop-thread_safety/pull/76): Detect offenses when using safe navigation for `ThreadSafety/DirChdir`, `ThreadSafety/NewThread` and `ThreadSafety/RackMiddlewareInstanceVariable` cops. ([@viralpraxis](https://github.com/viralpraxis))
 - [#73](https://github.com/rubocop/rubocop-thread_safety/pull/73): Add `AllowCallWithBlock` option to `ThreadSafety/DirChdir` cop. ([@viralpraxis](https://github.com/viralpraxis))
 
 ## 0.6.0
