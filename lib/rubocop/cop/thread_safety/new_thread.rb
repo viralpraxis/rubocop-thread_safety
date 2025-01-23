@@ -16,7 +16,7 @@ module RuboCop
 
         # @!method new_thread?(node)
         def_node_matcher :new_thread?, <<~MATCHER
-          ({send csend} (const {nil? cbase} :Thread) {:new :fork :start} ...)
+          (call (const {nil? cbase} :Thread) {:new :fork :start} ...)
         MATCHER
 
         def on_send(node)

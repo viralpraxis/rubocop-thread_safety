@@ -33,8 +33,8 @@ module RuboCop
         # @!method chdir?(node)
         def_node_matcher :chdir?, <<~MATCHER
           {
-            ({send csend} (const {nil? cbase} {:Dir :FileUtils}) :chdir ...)
-            ({send csend} (const {nil? cbase} :FileUtils) :cd ...)
+            (call (const {nil? cbase} {:Dir :FileUtils}) :chdir ...)
+            (call (const {nil? cbase} :FileUtils) :cd ...)
           }
         MATCHER
 
