@@ -198,7 +198,7 @@ module RuboCop
         end
 
         def range_type?(node)
-          node.erange_type? || node.irange_type?
+          node.type?(:erange, :irange)
         end
 
         def correct_splat_expansion(corrector, expr, splat_value)

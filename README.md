@@ -19,10 +19,13 @@ Install it with Bundler by invoking:
 
 Add this line to your application's `.rubocop.yml`:
 
-    require: rubocop-thread_safety
+    plugins: rubocop-thread_safety
 
 Now you can run `rubocop` and it will automatically load the RuboCop
 Thread-Safety cops together with the standard cops.
+
+> [!NOTE]
+> The plugin system is supported in RuboCop 1.72+. In earlier versions, use `require` instead of `plugins`.
 
 ### Scanning an application without adding it to the Gemfile
 
