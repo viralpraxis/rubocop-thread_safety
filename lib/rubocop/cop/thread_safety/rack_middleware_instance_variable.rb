@@ -88,7 +88,7 @@ module RuboCop
         def on_send(node)
           argument = node.first_argument
 
-          return unless argument&.sym_type? || argument&.str_type?
+          return unless argument&.type?(:sym, :str)
           return if allowed_identifier?(argument.value)
 
           add_offense node
