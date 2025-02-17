@@ -19,7 +19,6 @@ require 'rubocop-thread_safety'
 require 'rubocop-ast'
 
 require 'rubocop/rspec/support'
-require_relative 'shared_contexts'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
