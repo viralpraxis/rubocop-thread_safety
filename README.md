@@ -35,7 +35,7 @@ Install the gem:
 
 Scan the application for just thread-safety issues:
 
-    $ rubocop -r rubocop-thread_safety --only ThreadSafety,Style/GlobalVars,Style/ClassVars,Style/MutableConstant
+    $ rubocop --plugin rubocop-thread_safety --only ThreadSafety,Style/GlobalVars,Style/ClassVars,Style/MutableConstant
 
 ### Configuration
 
