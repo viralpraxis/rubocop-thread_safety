@@ -4,9 +4,7 @@ require 'rubocop'
 
 require 'rubocop/thread_safety'
 require 'rubocop/thread_safety/version'
-require 'rubocop/thread_safety/inject'
-
-RuboCop::ThreadSafety::Inject.defaults!
+require 'rubocop/thread_safety/plugin'
 
 require 'rubocop/cop/mixin/operation_with_threadsafe_result'
 

@@ -22,8 +22,6 @@ require 'rubocop/rspec/support'
 require_relative 'shared_contexts'
 
 RSpec.configure do |config|
-  config.include RuboCop::RSpec::ExpectOffense
-
   config.expect_with :rspec do |expectations|
     expectations.syntax = :expect
   end

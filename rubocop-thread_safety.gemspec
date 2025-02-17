@@ -26,7 +26,8 @@ Gem::Specification.new do |spec|
     'changelog_uri' => 'https://github.com/rubocop/rubocop-thread_safety/blob/master/CHANGELOG.md',
     'source_code_uri' => 'https://github.com/rubocop/rubocop-thread_safety',
     'bug_tracker_uri' => 'https://github.com/rubocop/rubocop-thread_safety/issues',
-    'rubygems_mfa_required' => 'true'
+    'rubygems_mfa_required' => 'true',
+    'default_lint_roller_plugin' => 'RuboCop::ThreadSafety::Plugin'
   }
 
   spec.bindir        = 'exe'
@@ -35,5 +36,6 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.7.0'
 
-  spec.add_dependency 'rubocop', '>= 1.48.1'
+  spec.add_dependency 'lint_roller', '~> 1.1'
+  spec.add_dependency 'rubocop', '~> 1.72', '>= 1.72.1'
 end
