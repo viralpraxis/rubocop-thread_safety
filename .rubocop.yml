@@ -28,6 +28,7 @@ Naming/FileName:
   Exclude:
     - lib/rubocop-thread_safety.rb
     - rubocop-thread_safety.gemspec
+    - pkg/**/*.rb
 
 # Enable more cops that are disabled by default:
 
