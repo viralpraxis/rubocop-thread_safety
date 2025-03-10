@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.7.1
+
+- [#84](https://github.com/rubocop/rubocop-thread_safety/pull/84):  Rename `InstanceVariableInClassMethod` in default config ([@sambostock](https://github.com/sambostock))
+
 ## 0.7.0
 
 - [#80](https://github.com/rubocop/rubocop-thread_safety/pull/80) Make RuboCop ThreadSafety work as a RuboCop plugin. ([@bquorning](https://github.com/bquorning))
