@@ -6,7 +6,7 @@ require 'rubocop/thread_safety/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'rubocop-thread_safety'
-  spec.version       = RuboCop::ThreadSafety::VERSION
+  spec.version       = RuboCop::ThreadSafety::Version::STRING
   spec.authors       = ['Michael Gee']
   spec.email         = ['michaelpgee@gmail.com']
 

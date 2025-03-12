@@ -2,6 +2,8 @@
 
 module RuboCop
   module ThreadSafety
-    VERSION = '0.7.1'
+    module Version
+      STRING = '0.7.1'
+    end
   end
 end

@@ -2,6 +2,8 @@
 
 ## master
 
+- [#88](https://github.com/rubocop/rubocop-thread_safety/pull/88): Fix incorrect plugin metadata version. ([@viralpraxis](https://github.com/viralpraxis))
+
 ## 0.7.1
 
 - [#84](https://github.com/rubocop/rubocop-thread_safety/pull/84): Rename `InstanceVariableInClassMethod` in default config ([@sambostock](https://github.com/sambostock))
