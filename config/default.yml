@@ -4,7 +4,7 @@
 
 ThreadSafety/ActiveSupportCallbacks:
   Description: 'Avoid mutating ActiveSupport callback chains at runtime.'
-  Enabled: true
+  Enabled: pending
   VersionAdded: '<<next>>'
 
 ThreadSafety/ClassAndModuleAttributes:
@@ -18,14 +18,14 @@ ThreadSafety/ClassInstanceVariable:
 
 ThreadSafety/MethodRedefinition:
   Description: 'Do not use `remove_method` followed by method definition.'
-  Enabled: true
+  Enabled: pending
   VersionAdded: '<<next>>'
   References:
     - 'https://bugs.ruby-lang.org/issues/13574'
 
 ThreadSafety/LazySynchronizationPrimitive:
   Description: 'Do not lazily initialize synchronization primitives with `||=`.'
-  Enabled: true
+  Enabled: pending
   VersionAdded: '<<next>>'
 
 ThreadSafety/MutableClassInstanceVariable:
